@@ -2,21 +2,23 @@ import { compose, createStore, applyMiddleware } from "redux";
 import logger from "redux-logger";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { thunk } from "redux-thunk";
 
 import { rootReducer } from "./root-reducer";
 
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["root"],
+  whitelist: ["cart"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 //the middleWare runs before an action hits the reducer (like a proxy)
-const middleWares = [process.env.NODE_ENV !== "production" && logger].filter(
-  Boolean,
-);
+const middleWares = [
+  process.env.NODE_ENV !== "production" && logger,
+  thunk,
+].filter(Boolean);
 
 const composedEnhancer =
   (process.env.NODE_ENV !== "production" &&
